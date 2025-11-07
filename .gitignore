@@ -19,6 +19,9 @@
 *.tar.gz
 *.rar
 
+# Add Jade Jar
+!libs/jade-4.5.0.jar
+
 # IntelliJ
 .idea/
 *.iml
