@@ -27,4 +27,11 @@ public class ResponseUtil {
                 new Response<>(data, message, HttpStatus.CREATED.value())
         );
     }
+
+    // Convenience constructor for noContent responses
+    public static <T> ResponseEntity<Response<T>> noContent() {
+
+        log.info("No content");
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+    }
 }
