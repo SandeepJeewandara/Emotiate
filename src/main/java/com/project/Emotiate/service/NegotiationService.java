@@ -39,5 +39,5 @@ public interface NegotiationService {
 
 
     // Method called by the UserAgent to persist its reply and push it via WebSocket
-    ChatMessageResponseDto saveAgentReply(UserAgentReplyDto request);
+    void saveAgentReply(UserAgentReplyDto request);
 }

@@ -58,16 +58,7 @@ public class NegotiationServiceImpl implements NegotiationService {
         log.info("Negotiation session created: {}", sessionId);
 
         // Spawn a dedicated UserAgent in the JADE container for this session
-        agentManagerService.createUserAgent(sessionId, request.getGuestName());
-
-        // If an opening message was provided, process it immediately after session creation
-        if (request.getInitialMessage() != null && !request.getInitialMessage().isBlank()) {
-            SendMessageRequestDto messageRequest = SendMessageRequestDto.builder()
-                    .sessionId(sessionId)
-                    .message(request.getInitialMessage())
-                    .build();
-            sendMessage(messageRequest);
-        }
+        agentManagerService.createSessionAgents(sessionId, request.getGuestName());
 
         // Map to Dto and return
         return mapSessionToDto(session);
@@ -159,7 +150,7 @@ public class NegotiationServiceImpl implements NegotiationService {
         sessionRepository.save(session);
 
         // Kill the UserAgent in the JADE container for this session
-        agentManagerService.terminateUserAgent(sessionId);
+        agentManagerService.terminateSessionAgents(sessionId);
         log.info("Session aborted: {}", sessionId);
 
         return mapSessionToDto(session);
@@ -178,7 +169,7 @@ public class NegotiationServiceImpl implements NegotiationService {
         sessionRepository.save(session);
 
         // Kill the UserAgent in the JADE container for this session
-        agentManagerService.terminateUserAgent(sessionId);
+        agentManagerService.terminateSessionAgents(sessionId);
         log.info("Session completed: {}", sessionId);
 
         return mapSessionToDto(session);
@@ -187,7 +178,7 @@ public class NegotiationServiceImpl implements NegotiationService {
 
     @Override
     // Method called by the UserAgent to persist its reply and push it via WebSocket
-    public ChatMessageResponseDto saveAgentReply(UserAgentReplyDto request) {
+    public void saveAgentReply(UserAgentReplyDto request) {
 
         NegotiationSession session = sessionRepository.findBySessionId(request.getSessionId())
                 .orElseThrow(() -> new CustomException("Session not found: " + request.getSessionId(), HttpStatus.NOT_FOUND.value()));
@@ -218,7 +209,6 @@ public class NegotiationServiceImpl implements NegotiationService {
 
         // Push the agent reply to the guest chat in real time via WebSocket
         messagingTemplate.convertAndSend("/topic/session/" + request.getSessionId(), responseDto);
-        return responseDto;
     }
 
 
