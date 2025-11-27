@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -60,4 +61,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
+
+    // Handle WebClientResponseException for external API errors
+    @ExceptionHandler(WebClientResponseException.class)
+    public ResponseEntity<Response<Object>> handleWebClientException(WebClientResponseException ex) {
+        Response<Object> response = new Response<>(
+                null,
+                "External API error: " + ex.getResponseBodyAsString(),
+                ex.getStatusCode().value()
+        );
+
+        return ResponseEntity.status(ex.getStatusCode()).body(response);
+    }
 }
