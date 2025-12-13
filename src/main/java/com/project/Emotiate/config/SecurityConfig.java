@@ -41,6 +41,10 @@ public class SecurityConfig {
                         // Authentication endpoints
                         .requestMatchers("/api/auth/**").permitAll()
 
+                        // Chat endpoints
+                        .requestMatchers("/api/chat/**").permitAll()
+                        .requestMatchers("/ws/**").permitAll()
+
                         // Role-based endpoints
                         .requestMatchers("/api/emotion/**").hasAnyRole("ADMIN", "STAFF", "GUEST")
                         .requestMatchers("/api/user/**").hasRole("ADMIN")

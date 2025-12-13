@@ -33,7 +33,7 @@ public class ChatMessage {
     @Enumerated(EnumType.STRING)
     @Column(name = "message_type", nullable = false)
     @Builder.Default
-    private MessageType contentType = MessageType.TEXT;
+    private MessageType messageType = MessageType.TEXT;
 
     @Column(name = "content", columnDefinition = "TEXT", nullable = false)
     private String content;
