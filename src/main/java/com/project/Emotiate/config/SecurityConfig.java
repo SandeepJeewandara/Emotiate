@@ -46,7 +46,9 @@ public class SecurityConfig {
                         .requestMatchers("/ws/**").permitAll()
 
                         // Role-based endpoints
-                        .requestMatchers("/api/emotion/**").hasAnyRole("ADMIN", "STAFF", "GUEST")
+                        .requestMatchers("/api/emotion/**").permitAll()
+                        .requestMatchers("/api/room/**").hasAnyRole("ADMIN", "STAFF")
+                        .requestMatchers("/api/package/**").hasAnyRole("ADMIN", "STAFF")
                         .requestMatchers("/api/user/**").hasRole("ADMIN")
 
                         // All other endpoints require authentication
