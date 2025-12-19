@@ -46,6 +46,14 @@ public class NegotiationController {
     }
 
 
+    @GetMapping("/sessions")
+    public ResponseEntity<Response<List<NegotiationSessionResponseDto>>> getAllSessions() {
+
+        log.info("Retrieving all negotiation sessions");
+        return ResponseUtil.success(negotiationService.getAllSessions(), "All sessions retrieved successfully");
+    }
+
+
     @GetMapping("/session/{sessionId}/messages")
     public ResponseEntity<Response<List<ChatMessageResponseDto>>> getSessionMessages(@PathVariable String sessionId) {
 
@@ -59,6 +67,14 @@ public class NegotiationController {
 
         log.info("Retrieving all active negotiation sessions");
         return ResponseUtil.success(negotiationService.getActiveSessions(), "Active sessions retrieved successfully");
+    }
+
+
+    @DeleteMapping("/sessions/{id}")
+    public ResponseEntity<Response<Void>> deleteSession(@PathVariable Long id) {
+
+        log.info("Deleting session with id: {}", id);
+        return ResponseUtil.success(negotiationService.deleteSession(id), "Session deleted successfully");
     }
 
 

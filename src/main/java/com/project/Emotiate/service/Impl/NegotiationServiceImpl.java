@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -128,6 +129,17 @@ public class NegotiationServiceImpl implements NegotiationService {
 
 
     @Override
+    // Method to retrieve all sessions for session history management
+    public List<NegotiationSessionResponseDto> getAllSessions() {
+
+        return sessionRepository.findAll()
+                .stream()
+                .map(this::mapSessionToDto)
+                .collect(Collectors.toList());
+    }
+
+
+    @Override
     // Method to retrieve all currently active sessions for admin monitoring
     public List<NegotiationSessionResponseDto> getActiveSessions() {
 
@@ -135,6 +147,28 @@ public class NegotiationServiceImpl implements NegotiationService {
                 .stream()
                 .map(this::mapSessionToDto)
                 .collect(Collectors.toList());
+    }
+
+
+    @Override
+    @Transactional
+    // Method to delete a session and its chat history by database ID
+    public Void deleteSession(Long id) {
+
+        // Find the session by database
+        NegotiationSession session = sessionRepository.findById(id)
+                .orElseThrow(() -> new CustomException("Session not found with id: " + id, HttpStatus.NOT_FOUND.value()));
+
+        // Stop the running agent first if the session is still active
+        if (session.getStatus() == SessionStatus.ACTIVE) {
+            agentManagerService.terminateSessionAgents(session.getSessionId());
+        }
+
+        // Delete the session record
+        sessionRepository.delete(session);
+        log.info("Session deleted: id={} sessionId={}", id, session.getSessionId());
+
+        return null;
     }
 
 

@@ -26,8 +26,16 @@ public interface NegotiationService {
     NegotiationSessionResponseDto getSession(String sessionId);
 
 
+    // Method to retrieve all negotiation sessions
+    List<NegotiationSessionResponseDto> getAllSessions();
+
+
     // Method to retrieve all currently active sessions for admin monitoring
     List<NegotiationSessionResponseDto> getActiveSessions();
+
+
+    // Method to delete a session and its related history by database ID
+    Void deleteSession(Long id);
 
 
     // Method to abort a session without agreement and terminate its UserAgent

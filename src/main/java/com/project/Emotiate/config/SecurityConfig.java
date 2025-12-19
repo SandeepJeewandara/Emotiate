@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -42,6 +43,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
 
                         // Chat endpoints
+                        .requestMatchers(HttpMethod.GET, "/api/chat/sessions").hasAnyRole("ADMIN", "STAFF")
+                        .requestMatchers(HttpMethod.DELETE, "/api/chat/sessions/**").hasAnyRole("ADMIN", "STAFF")
                         .requestMatchers("/api/chat/**").permitAll()
                         .requestMatchers("/ws/**").permitAll()
 
@@ -49,6 +52,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/emotion/**").permitAll()
                         .requestMatchers("/api/room/**").hasAnyRole("ADMIN", "STAFF")
                         .requestMatchers("/api/package/**").hasAnyRole("ADMIN", "STAFF")
+                        .requestMatchers("/api/booking/**").hasAnyRole("ADMIN", "STAFF")
                         .requestMatchers("/api/user/**").hasRole("ADMIN")
 
                         // All other endpoints require authentication
