@@ -15,15 +15,18 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @AllArgsConstructor
+@Transactional
 public class PackageServiceImpl implements PackageService {
 
     private final HotelPackageRepository packageRepository;
@@ -114,7 +117,7 @@ public class PackageServiceImpl implements PackageService {
                 .build();
 
         packageRepository.save(pkg);
-        log.info("Package added — name={} room={} lower={} upper={}",
+        log.info("Package added  name={} room={} lower={} upper={}",
                 pkg.getName(), room.getRoomNumber(),
                 pkg.getLowerBoundPrice(), pkg.getUpperBoundPrice());
 
@@ -178,7 +181,7 @@ public class PackageServiceImpl implements PackageService {
 
         pkg.setUpdatedAt(LocalDateTime.now());
         packageRepository.save(pkg);
-        log.info("Package updated — id={}", id);
+        log.info("Package updated  id={}", id);
 
         return toResponseDto(pkg);
     }
@@ -203,7 +206,7 @@ public class PackageServiceImpl implements PackageService {
         pkg.setIsActive(false);
         pkg.setUpdatedAt(LocalDateTime.now());
         packageRepository.save(pkg);
-        log.info("Package soft-deleted — id={}", id);
+        log.info("Package soft-deleted  id={}", id);
 
         return null;
     }
@@ -221,7 +224,7 @@ public class PackageServiceImpl implements PackageService {
                                 "Invalid add-on: " + s, HttpStatus.BAD_REQUEST.value());
                     }
                 })
-                .toList();
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
 

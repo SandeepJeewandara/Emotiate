@@ -26,7 +26,7 @@ public class PackageController {
             @RequestParam(required = false) Boolean isActive,
             @RequestParam(required = false) String  roomType) {
 
-        log.info("Retrieving packages — isActive={} roomType={}", isActive, roomType);
+        log.info("Retrieving packages  isActive={} roomType={}", isActive, roomType);
         return ResponseUtil.success(packageService.getPackages(isActive, roomType), "Packages retrieved successfully");
     }
 
@@ -34,7 +34,7 @@ public class PackageController {
     @GetMapping("/get/{id}")
     public ResponseEntity<Response<PackageResponseDto>> getPackageById(@PathVariable Long id) {
 
-        log.info("Retrieving package — id={}", id);
+        log.info("Retrieving package  id={}", id);
         return ResponseUtil.success(packageService.getPackageById(id), "Package retrieved successfully");
     }
 
@@ -42,7 +42,7 @@ public class PackageController {
     @PostMapping("/add")
     public ResponseEntity<Response<PackageResponseDto>> addPackage(@RequestBody PackageAddRequestDto request) {
 
-        log.info("Adding package — name={} roomId={}", request.getName(), request.getRoomId());
+        log.info("Adding package  name={} roomId={}", request.getName(), request.getRoomId());
         return ResponseUtil.created(packageService.addPackage(request), "Package added successfully");
     }
 
@@ -52,7 +52,7 @@ public class PackageController {
             @PathVariable Long id,
             @RequestBody PackageUpdateRequestDto request) {
 
-        log.info("Editing package — id={}", id);
+        log.info("Editing package  id={}", id);
         return ResponseUtil.success(packageService.editPackage(id, request), "Package updated successfully");
     }
 
@@ -60,7 +60,7 @@ public class PackageController {
     @DeleteMapping("/remove/{id}")
     public ResponseEntity<Response<Void>> removePackage(@PathVariable Long id) {
 
-        log.info("Removing package — id={}", id);
+        log.info("Removing package  id={}", id);
         return ResponseUtil.success(packageService.removePackage(id), "Package removed successfully");
     }
 }

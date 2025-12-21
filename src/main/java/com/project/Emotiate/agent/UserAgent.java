@@ -98,7 +98,7 @@ public class UserAgent extends Agent {
                 // Build a CFP (Call For Proposal) directed at the SellerAgent
                 ACLMessage cfp = buildCfpMessage(incomingMessage);
                 send(cfp);
-                log.info("UserAgent {} sent CFP to {} — round {}", sessionId, pairedSellerAgentName, incomingMessage.getRound());
+                log.info("UserAgent {} sent CFP to {}  round {}", sessionId, pairedSellerAgentName, incomingMessage.getRound());
 
             }catch(Exception e){
                 log.error("UserAgent {} failed to dispatch CFP: {}", sessionId, e.getMessage(), e);
@@ -168,7 +168,7 @@ public class UserAgent extends Agent {
                 break;
 
             default:
-                log.warn("UserAgent {} — unhandled performative {} from {}",
+                log.warn("UserAgent {}  unhandled performative {} from {}",
                         sessionId,
                         ACLMessage.getPerformative(reply.getPerformative()),
                         pairedSellerAgentName);
@@ -191,7 +191,7 @@ public class UserAgent extends Agent {
         }
 
         if (replyContent == null) {
-            log.error("UserAgent {} — failed to deserialize PROPOSE content from {}", sessionId, pairedSellerAgentName);
+            log.error("UserAgent {}  failed to deserialize PROPOSE content from {}", sessionId, pairedSellerAgentName);
             handleParseFailure();
             return;
         }

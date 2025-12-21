@@ -85,7 +85,7 @@ public class EmotionDetectionModule {
         return EmotionResultDto.builder()
                 .emotion(EmotionState.NEUTRAL)
                 .confidence(0.0)
-                .reasoning("Detection failed — defaulting to NEUTRAL")
+                .reasoning("Detection failed. Defaulting to NEUTRAL")
                 .build();
     }
 }

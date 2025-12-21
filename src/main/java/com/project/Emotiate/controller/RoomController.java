@@ -27,7 +27,7 @@ public class RoomController {
             @RequestParam(required = false) String  roomType,
             @RequestParam(required = false) Integer floor) {
 
-        log.info("Retrieving rooms — isActive={} roomType={} floor={}", isActive, roomType, floor);
+        log.info("Retrieving rooms  isActive={} roomType={} floor={}", isActive, roomType, floor);
         return ResponseUtil.success(roomService.getRooms(isActive, roomType, floor), "Rooms retrieved successfully");
     }
 
@@ -36,7 +36,7 @@ public class RoomController {
     public ResponseEntity<Response<RoomResponseDto>> addRoom(
             @RequestBody RoomAddRequestDto request) {
 
-        log.info("Adding room — number={}", request.getRoomNumber());
+        log.info("Adding room  number={}", request.getRoomNumber());
         return ResponseUtil.created(roomService.addRoom(request), "Room added successfully");
     }
 
@@ -46,7 +46,7 @@ public class RoomController {
             @PathVariable Long id,
             @RequestBody RoomUpdateRequestDto request) {
 
-        log.info("Editing room — id={}", id);
+        log.info("Editing room  id={}", id);
         return ResponseUtil.success(roomService.editRoom(id, request), "Room updated successfully");
     }
 
@@ -54,7 +54,7 @@ public class RoomController {
     @DeleteMapping("/remove/{id}")
     public ResponseEntity<Response<Void>> removeRoom(@PathVariable Long id) {
 
-        log.info("Removing room — id={}", id);
+        log.info("Removing room  id={}", id);
         return ResponseUtil.success(roomService.removeRoom(id), "Room removed successfully");
     }
 }

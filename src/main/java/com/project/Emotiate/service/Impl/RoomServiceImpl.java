@@ -89,7 +89,7 @@ public class RoomServiceImpl implements RoomService {
                 .build();
 
         roomRepository.save(room);
-        log.info("Room added — number={} type={}", room.getRoomNumber(), room.getRoomType());
+        log.info("Room added  number={} type={}", room.getRoomNumber(), room.getRoomType());
 
         return toResponseDto(room);
     }
@@ -127,7 +127,7 @@ public class RoomServiceImpl implements RoomService {
 
         room.setUpdatedAt(LocalDateTime.now());
         roomRepository.save(room);
-        log.info("Room updated — id={}", id);
+        log.info("Room updated  id={}", id);
 
         return toResponseDto(room);
     }
@@ -153,7 +153,7 @@ public class RoomServiceImpl implements RoomService {
         room.setIsActive(false);
         room.setUpdatedAt(LocalDateTime.now());
         roomRepository.save(room);
-        log.info("Room soft-deleted — id={}", id);
+        log.info("Room soft-deleted  id={}", id);
 
         return null;
     }
