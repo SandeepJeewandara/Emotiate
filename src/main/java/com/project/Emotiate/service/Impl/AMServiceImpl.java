@@ -62,7 +62,7 @@ public class AMServiceImpl implements AgentManagerService {
         } catch (Exception e) {
             log.error("Failed to create UserAgent for session: {}", sessionId, e);
 
-            // SellerAgent was already started — clean it up to avoid orphaned agents
+            // SellerAgent was already started  clean it up to avoid orphaned agents
             terminateAgent(sessionId, sellerAgentMap, "SellerAgent");
 
             throw new CustomException("Failed to spawn UserAgent for session: " + sessionId,
