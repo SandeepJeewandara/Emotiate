@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -209,6 +210,40 @@ public class PackageServiceImpl implements PackageService {
         log.info("Package soft-deleted  id={}", id);
 
         return null;
+    }
+
+
+    @Override
+    // Retrieve active packages that satisfy requested add-ons and guest capacity
+    public List<PackageResponseDto> getPackagesByRequirements(List<String> addOns, Integer guestCount) {
+
+        // Resolve requested add-ons to enum values
+        List<PackageAddOn> requiredAddOns = (addOns != null && !addOns.isEmpty())
+                ? resolveAddOns(addOns)
+                : List.of();
+
+        List<HotelPackage> packages = packageRepository.findByIsActive(true);
+
+        // Filter by guest capacity if provided
+        if (guestCount != null) {
+            packages = packages.stream()
+                    .filter(p -> p.getMaxOccupancy() >= guestCount)
+                    .toList();
+        }
+
+        // Filter to packages that contain every requested add-on
+        if (!requiredAddOns.isEmpty()) {
+            packages = packages.stream()
+                    .filter(p -> new HashSet<>(p.getAddOns()).containsAll(requiredAddOns))
+                    .toList();
+        }
+
+        log.info("Package requirement query  addOns={} guestCount={} matched={}",
+                addOns, guestCount, packages.size());
+
+        return packages.stream()
+                .map(this::toResponseDto)
+                .toList();
     }
 
 

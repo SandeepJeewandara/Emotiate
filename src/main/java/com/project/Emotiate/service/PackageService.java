@@ -22,4 +22,7 @@ public interface PackageService {
 
     // Soft delete a package
     Void removePackage(Long id);
+
+    // Retrieve active packages matching required add-ons and guest count
+    List<PackageResponseDto> getPackagesByRequirements(List<String> addOns, Integer guestCount);
 }
