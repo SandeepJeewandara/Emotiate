@@ -50,6 +50,7 @@ public class SecurityConfig {
 
                         // Role-based endpoints
                         .requestMatchers("/api/emotion/**").permitAll()
+                        .requestMatchers("/api/package/get").permitAll()
                         .requestMatchers("/api/room/**").hasAnyRole("ADMIN", "STAFF")
                         .requestMatchers("/api/package/**").hasAnyRole("ADMIN", "STAFF")
                         .requestMatchers("/api/booking/**").hasAnyRole("ADMIN", "STAFF")
