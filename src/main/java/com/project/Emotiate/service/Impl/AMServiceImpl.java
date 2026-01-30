@@ -1,10 +1,12 @@
 package com.project.Emotiate.service.Impl;
 
+import com.project.Emotiate.agent.ResourceMgtAgent;
 import com.project.Emotiate.agent.SellerAgent;
 import com.project.Emotiate.agent.UserAgent;
 import com.project.Emotiate.dto.session.AgentMessageDto;
 import com.project.Emotiate.exception.CustomException;
 import com.project.Emotiate.service.AgentManagerService;
+import jakarta.annotation.PostConstruct;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
 import jade.wrapper.StaleProxyException;
@@ -27,6 +29,24 @@ public class AMServiceImpl implements AgentManagerService {
 
     // Thread-safe map of sessionId -> SellerAgent controller
     private final ConcurrentHashMap<String, AgentController> sellerAgentMap = new ConcurrentHashMap<>();
+
+
+    @PostConstruct
+    // Start the singleton ResourceMgtAgent once when the application starts
+    public void startResourceMgtAgent() {
+        try {
+            AgentController resourceMgtAgent = container.createNewAgent(
+                    "resource-management",
+                    ResourceMgtAgent.class.getName(),
+                    new Object[]{}
+            );
+            resourceMgtAgent.start();
+            log.info("ResourceMgtAgent started as singleton: resource-management");
+
+        } catch (Exception e) {
+            log.error("Failed to start ResourceMgtAgent", e);
+        }
+    }
 
 
     @Override
