@@ -33,8 +33,8 @@ public class Booking {
     private String bookingReference;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User guest;
+    @JoinColumn(name = "guest_id")
+    private Guest guest;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "package_id", nullable = false)
