@@ -223,8 +223,15 @@ public class NegotiationServiceImpl implements NegotiationService {
             sessionRepository.save(session);
         }
 
-        // Determine message type based on whether metadata (package card) is present
-        MessageType type = (request.getMetadata() != null && !request.getMetadata().isBlank()) ? MessageType.PACKAGE_CARD : MessageType.TEXT;
+        // Determine message type based on content
+        MessageType type;
+        if (Boolean.TRUE.equals(request.getBookingComplete())) {
+            type = MessageType.BOOKING_CARD;
+        } else if (request.getMetadata() != null && !request.getMetadata().isBlank()) {
+            type = MessageType.PACKAGE_CARD;
+        } else {
+            type = MessageType.TEXT;
+        }
 
         // Persist the agent reply message
         ChatMessage agentMessage = ChatMessage.builder()

@@ -18,10 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -227,7 +224,7 @@ public class PackageServiceImpl implements PackageService {
         // Filter by guest capacity if provided
         if (guestCount != null) {
             packages = packages.stream()
-                    .filter(p -> p.getMaxOccupancy() >= guestCount)
+                    .filter(p -> Objects.equals(p.getMaxOccupancy(), guestCount))
                     .toList();
         }
 

@@ -1,11 +1,11 @@
 package com.project.Emotiate.util;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 @Slf4j
 @Component
@@ -27,6 +27,14 @@ public class JsonUtil {
     public static <T> T fromJson(String json, Class<T> targetClass) {
 
         try { return mapper.readValue(json, targetClass); }
+        catch (Exception e) { throw new RuntimeException("JSON deserialize failed: " + json, e); }
+    }
+
+
+    // Deserialize a JSON string using a TypeReference
+    public static <T> T fromJson(String json, TypeReference<T> typeRef) {
+
+        try { return mapper.readValue(json, typeRef); }
         catch (Exception e) { throw new RuntimeException("JSON deserialize failed: " + json, e); }
     }
 }

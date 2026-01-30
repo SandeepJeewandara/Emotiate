@@ -5,14 +5,14 @@ import com.project.Emotiate.dto.resourceAgt.AvailabilityResponseDto;
 import com.project.Emotiate.dto.resourceAgt.BookingRequestDto;
 import com.project.Emotiate.dto.resourceAgt.BookingResponseDto;
 import com.project.Emotiate.entity.Booking;
+import com.project.Emotiate.entity.Guest;
 import com.project.Emotiate.entity.HotelPackage;
-import com.project.Emotiate.entity.User;
 import com.project.Emotiate.enums.BookingStatus;
 import com.project.Emotiate.exception.CustomException;
 import com.project.Emotiate.repository.BookingRepository;
+import com.project.Emotiate.repository.GuestRepository;
 import com.project.Emotiate.repository.HotelPackageRepository;
 import com.project.Emotiate.repository.RoomRepository;
-import com.project.Emotiate.repository.UserRepository;
 import com.project.Emotiate.service.InventoryService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +35,7 @@ public class InventoryServiceImpl implements InventoryService {
     private final HotelPackageRepository packageRepository;
     private final BookingRepository bookingRepository;
     private final RoomRepository roomRepository;
-    private final UserRepository userRepository;
+    private final GuestRepository guestRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -106,6 +106,7 @@ public class InventoryServiceImpl implements InventoryService {
 
 
     @Override
+    @Transactional
     // Method to confirm a booking based on the finalized request
     public BookingResponseDto confirmBooking(BookingRequestDto request) {
 
@@ -148,10 +149,10 @@ public class InventoryServiceImpl implements InventoryService {
                     .build();
         }
 
-        // Get the guest if a guest id is provided
-        User guest = null;
-        if (request.getGuestId() != null) {
-            guest = userRepository.findById(request.getGuestId()).orElse(null);
+        // Get the guest by session ID
+        Guest guest = null;
+        if (request.getSessionId() != null) {
+            guest = guestRepository.findBySessionId(request.getSessionId()).orElse(null);
         }
 
         // Generate a booking reference for the new reservation
@@ -198,6 +199,6 @@ public class InventoryServiceImpl implements InventoryService {
                 .packageName(pkg.getName())
                 .message("Booking confirmed successfully")
                 .build();
-
     }
+
 }
