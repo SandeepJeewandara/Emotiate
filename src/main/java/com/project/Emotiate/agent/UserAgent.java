@@ -183,6 +183,7 @@ public class UserAgent extends Agent {
         try {
             // Use JsonUtil to deserialize the ACL content
             replyContent = JsonUtil.fromJson(reply.getContent(), SellerReplyContentDto.class);
+
         } catch (RuntimeException ex) {
             log.error("UserAgent {} failed to parse PROPOSE content from {} | payload: {}",
                     sessionId, pairedSellerAgentName, reply.getContent(), ex);
@@ -198,15 +199,18 @@ public class UserAgent extends Agent {
 
         // Delegate DB persistence and WebSocket push to the Spring service
         negotiationService.saveAgentReply(
-                new UserAgentReplyDto(sessionId,
-                        replyContent.getAgentReply(),
-                        replyContent.getDetectedEmotion(),
-                        replyContent.getOfferedPrice(),
-                        replyContent.getMetadata())
+                UserAgentReplyDto.builder()
+                        .sessionId(sessionId)
+                        .agentReply(replyContent.getAgentReply())
+                        .detectedEmotion(replyContent.getDetectedEmotion())
+                        .offeredPrice(replyContent.getOfferedPrice())
+                        .metadata(replyContent.getMetadata())
+                        .bookingComplete(replyContent.getBookingComplete())
+                        .build()
         );
 
-        log.info("UserAgent {} persisted PROPOSE reply | emotion={} strategy={}",
-                sessionId, replyContent.getDetectedEmotion(), replyContent.getStrategy());
+        log.info("UserAgent {} persisted PROPOSE reply for user : {} | emotion={} strategy={} ",
+                sessionId, guestName, replyContent.getDetectedEmotion(), replyContent.getStrategy());
     }
 
 
@@ -215,7 +219,7 @@ public class UserAgent extends Agent {
 
         String fallback = "I'm sorry, I encountered an issue preparing your offer. Please try again later.";
         negotiationService.saveAgentReply(
-                new UserAgentReplyDto(sessionId,fallback,null,null,null)
+                UserAgentReplyDto.builder().sessionId(sessionId).agentReply(fallback).build()
         );
     }
 
@@ -225,7 +229,7 @@ public class UserAgent extends Agent {
 
         log.warn("UserAgent {} received REFUSE from {} | reason: {}", sessionId, pairedSellerAgentName, reply.getContent());
         negotiationService.saveAgentReply(
-                new UserAgentReplyDto(sessionId, reply.getContent(),null,null,null)
+                UserAgentReplyDto.builder().sessionId(sessionId).agentReply(reply.getContent()).build()
         );
     }
 
@@ -236,7 +240,7 @@ public class UserAgent extends Agent {
         log.error("UserAgent {} received FAILURE from {} | detail: {}", sessionId, pairedSellerAgentName, reply.getContent());
         String fallback = "I'm sorry, something went wrong while processing your request. Please try again.";
         negotiationService.saveAgentReply(
-                new UserAgentReplyDto(sessionId,fallback,null,null,null)
+                UserAgentReplyDto.builder().sessionId(sessionId).agentReply(fallback).build()
         );
     }
 }
