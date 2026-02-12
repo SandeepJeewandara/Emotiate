@@ -17,7 +17,8 @@ public class SellerReplyContentDto {
     private String detectedEmotion;
     private String strategy;
     private Double offeredPrice;
-    private Long recommendedRoomId;
+    private Long recommendedPackageId;
+    private String bookingReference;
     private String metadata;
     private Boolean bookingComplete;
 }

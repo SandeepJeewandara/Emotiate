@@ -204,6 +204,8 @@ public class UserAgent extends Agent {
                         .agentReply(replyContent.getAgentReply())
                         .detectedEmotion(replyContent.getDetectedEmotion())
                         .offeredPrice(replyContent.getOfferedPrice())
+                        .recommendedPackageId(replyContent.getRecommendedPackageId())
+                        .bookingReference(replyContent.getBookingReference())
                         .metadata(replyContent.getMetadata())
                         .bookingComplete(replyContent.getBookingComplete())
                         .build()

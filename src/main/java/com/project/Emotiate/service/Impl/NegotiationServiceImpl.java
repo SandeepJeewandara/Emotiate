@@ -217,11 +217,21 @@ public class NegotiationServiceImpl implements NegotiationService {
         NegotiationSession session = sessionRepository.findBySessionId(request.getSessionId())
                 .orElseThrow(() -> new CustomException("Session not found: " + request.getSessionId(), HttpStatus.NOT_FOUND.value()));
 
-        // Update the session's latest offered price if the agent proposed one
+        // Update the session with the latest negotiated values coming from the agent pipeline.
         if (request.getOfferedPrice() != null) {
             session.setOfferedPrice(request.getOfferedPrice());
-            sessionRepository.save(session);
         }
+        if (request.getRecommendedPackageId() != null) {
+            session.setRecommendedPackageId(request.getRecommendedPackageId());
+        }
+        if (request.getBookingReference() != null && !request.getBookingReference().isBlank()) {
+            session.setBookingReference(request.getBookingReference());
+        }
+        if (Boolean.TRUE.equals(request.getBookingComplete())) {
+            session.setStatus(SessionStatus.COMPLETED);
+            session.setEndedAt(LocalDateTime.now());
+        }
+        sessionRepository.save(session);
 
         // Determine message type based on content
         MessageType type;

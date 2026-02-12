@@ -15,6 +15,8 @@ public class UserAgentReplyDto {
     private String agentReply;
     private String detectedEmotion;
     private Double offeredPrice;
+    private Long recommendedPackageId;
+    private String bookingReference;
     private String metadata;
-    private Boolean bookingComplete; // signals BOOKING_CARD message type
+    private Boolean bookingComplete;
 }
