@@ -48,4 +48,8 @@ public interface NegotiationService {
 
     // Method called by the UserAgent to persist its reply and push it via WebSocket
     void saveAgentReply(UserAgentReplyDto request);
+
+
+    // Method to retrieve average agent reply time across all recorded messages
+    java.util.Map<String, Object> getResponseTimeStats();
 }

@@ -16,6 +16,7 @@ import com.project.Emotiate.repository.ChatMessageRepository;
 import com.project.Emotiate.repository.NegotiationSessionRepository;
 import com.project.Emotiate.service.AgentManagerService;
 import com.project.Emotiate.service.NegotiationService;
+import com.project.Emotiate.util.ResponseTimeTracker;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -25,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -37,6 +39,7 @@ public class NegotiationServiceImpl implements NegotiationService {
     private final ChatMessageRepository messageRepository;
     private final AgentManagerService agentManagerService;
     private final SimpMessagingTemplate messagingTemplate;
+    private final ResponseTimeTracker responseTimeTracker;
 
     @Override
     // Method to create a new negotiation session and spawn a UserAgent for it
@@ -100,6 +103,9 @@ public class NegotiationServiceImpl implements NegotiationService {
                 .conversationHistory(conversationHistory)
                 .round(session.getCurrentRound())
                 .build();
+
+        // Start tracking time
+        responseTimeTracker.recordMessageDispatched(request.getSessionId());
 
         agentManagerService.sendMessageToAgent(request.getSessionId(), agentMessage);
         return mapMessageToDto(guestMessage);
@@ -243,6 +249,9 @@ public class NegotiationServiceImpl implements NegotiationService {
             type = MessageType.TEXT;
         }
 
+        // Stop tracking time
+        Long responseTimeMs = responseTimeTracker.computeAndClear(request.getSessionId());
+
         // Persist the agent reply message
         ChatMessage agentMessage = ChatMessage.builder()
                 .session(session)
@@ -252,6 +261,7 @@ public class NegotiationServiceImpl implements NegotiationService {
                 .detectedEmotion(request.getDetectedEmotion())
                 .offeredPrice(request.getOfferedPrice())
                 .metadata(request.getMetadata())
+                .responseTimeMs(responseTimeMs)
                 .timestamp(LocalDateTime.now())
                 .build();
 
@@ -260,6 +270,18 @@ public class NegotiationServiceImpl implements NegotiationService {
 
         // Push the agent reply to the guest chat in real time via WebSocket
         messagingTemplate.convertAndSend("/topic/session/" + request.getSessionId(), responseDto);
+    }
+
+
+    @Override
+    // Method to retrieve average agent reply time across all recorded messages
+    public Map<String, Object> getResponseTimeStats() {
+        Double average = messageRepository.findAverageResponseTimeMs();
+        Long count = messageRepository.countRepliesWithResponseTime();
+        return Map.of(
+                "averageResponseTimeMs", average != null ? average : 0.0,
+                "totalReplies", count != null ? count : 0L
+        );
     }
 
 
@@ -313,6 +335,7 @@ public class NegotiationServiceImpl implements NegotiationService {
                 .detectedEmotion(message.getDetectedEmotion())
                 .offeredPrice(message.getOfferedPrice())
                 .metadata(message.getMetadata())
+                .responseTimeMs(message.getResponseTimeMs())
                 .timestamp(message.getTimestamp())
                 .build();
     }

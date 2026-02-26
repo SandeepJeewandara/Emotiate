@@ -1,3 +1,4 @@
+
 package com.project.Emotiate.controller;
 
 import com.project.Emotiate.dto.chat.ChatMessageResponseDto;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -91,5 +93,13 @@ public class NegotiationController {
 
         log.info("Completing session: {}", sessionId);
         return ResponseUtil.success(negotiationService.completeSession(sessionId), "Session completed successfully");
+    }
+
+
+    @GetMapping("/stats/response-time")
+    public ResponseEntity<Response<Map<String, Object>>> getResponseTimeStats() {
+
+        log.info("Retrieving response time statistics");
+        return ResponseUtil.success(negotiationService.getResponseTimeStats(), "Response time statistics retrieved");
     }
 }

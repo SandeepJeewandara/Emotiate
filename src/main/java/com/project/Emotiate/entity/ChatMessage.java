@@ -48,6 +48,9 @@ public class ChatMessage {
     @JdbcTypeCode(SqlTypes.JSON)
     private String metadata;
 
+    @Column(name = "response_time_ms")
+    private Long responseTimeMs;
+
     @Column(name = "timestamp", nullable = false)
     private LocalDateTime timestamp;
 

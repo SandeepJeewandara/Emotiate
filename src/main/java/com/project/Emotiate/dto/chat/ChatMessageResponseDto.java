@@ -23,5 +23,6 @@ public class ChatMessageResponseDto {
     private String detectedEmotion;
     private Double offeredPrice;
     private String metadata;
+    private Long responseTimeMs;
     private LocalDateTime timestamp;
 }

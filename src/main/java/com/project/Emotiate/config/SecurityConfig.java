@@ -44,6 +44,7 @@ public class SecurityConfig {
 
                         // Chat endpoints
                         .requestMatchers(HttpMethod.GET, "/api/chat/sessions").hasAnyRole("ADMIN", "STAFF")
+                        .requestMatchers(HttpMethod.GET, "/api/chat/stats/**").hasAnyRole("ADMIN", "STAFF")
                         .requestMatchers(HttpMethod.DELETE, "/api/chat/sessions/**").hasAnyRole("ADMIN", "STAFF")
                         .requestMatchers("/api/chat/**").permitAll()
                         .requestMatchers("/ws/**").permitAll()
