@@ -72,7 +72,7 @@ public class LLMServiceImpl implements LLMService {
             String content = response.getChoices().getFirst().getMessage().getContent();
 
 
-            log.info("LLM response received: {}", content);
+            log.debug("LLM response received: {}", content);
             return content;
 
         } catch (WebClientResponseException e) {

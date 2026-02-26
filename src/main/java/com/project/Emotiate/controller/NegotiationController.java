@@ -35,7 +35,7 @@ public class NegotiationController {
     @PostMapping("/session/message")
     public ResponseEntity<Response<ChatMessageResponseDto>> sendMessage(@RequestBody SendMessageRequestDto request) {
 
-        log.info("Guest message received for session: {}", request.getSessionId());
+        log.debug("Guest message received for session: {}", request.getSessionId());
         return ResponseUtil.success(negotiationService.sendMessage(request), "Message sent successfully");
     }
 

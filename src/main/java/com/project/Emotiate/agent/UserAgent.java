@@ -86,19 +86,19 @@ public class UserAgent extends Agent {
             // Validate incoming message
             if (incomingMessage == null) {
 
-                log.warn("User Agent {} received an empty AgentMessageDto", sessionId);
+                log.debug("User Agent {} received an empty AgentMessageDto", sessionId);
                 block();
                 return;
             }
 
-            log.info("UserAgent {} received O2A message - round {}", sessionId, incomingMessage.getRound());
+            log.debug("UserAgent {} received O2A message - round {}", sessionId, incomingMessage.getRound());
 
             try{
 
                 // Build a CFP (Call For Proposal) directed at the SellerAgent
                 ACLMessage cfp = buildCfpMessage(incomingMessage);
                 send(cfp);
-                log.info("UserAgent {} sent CFP to {}  round {}", sessionId, pairedSellerAgentName, incomingMessage.getRound());
+                log.debug("UserAgent {} sent CFP to {}  round {}", sessionId, pairedSellerAgentName, incomingMessage.getRound());
 
             }catch(Exception e){
                 log.error("UserAgent {} failed to dispatch CFP: {}", sessionId, e.getMessage(), e);
@@ -139,12 +139,12 @@ public class UserAgent extends Agent {
             // Validate agent reply
             if (reply == null) {
 
-                log.warn("UserAgent {} received an empty ACLMessage from SellerAgent", sessionId);
+                log.debug("UserAgent {} received an empty ACLMessage from SellerAgent", sessionId);
                 block();
                 return;
             }
 
-            log.info("UserAgent {} received ACL reply from {} | performative: {}", sessionId, pairedSellerAgentName, ACLMessage.getPerformative(reply.getPerformative()));
+            log.debug("UserAgent {} received ACL reply from {} | performative: {}", sessionId, pairedSellerAgentName, ACLMessage.getPerformative(reply.getPerformative()));
             handleSellerReply(reply);
         }
     }
@@ -211,7 +211,7 @@ public class UserAgent extends Agent {
                         .build()
         );
 
-        log.info("UserAgent {} persisted PROPOSE reply for user : {} | emotion={} strategy={} ",
+        log.debug("UserAgent {} persisted PROPOSE reply for user : {} | emotion={} strategy={} ",
                 sessionId, guestName, replyContent.getDetectedEmotion(), replyContent.getStrategy());
     }
 

@@ -22,7 +22,7 @@ public class ResponseUtil {
     // Convenience constructor for created responses
     public static <T> ResponseEntity<Response<T>> created(T data, String message) {
 
-        log.info(message);
+        log.debug(message);
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 new Response<>(data, message, HttpStatus.CREATED.value())
         );
@@ -31,7 +31,7 @@ public class ResponseUtil {
     // Convenience constructor for noContent responses
     public static <T> ResponseEntity<Response<T>> noContent() {
 
-        log.info("No content");
+        log.debug("No content");
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 }

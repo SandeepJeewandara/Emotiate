@@ -178,7 +178,7 @@ public class SellerAgent extends Agent {
             // Set Guest name
             if (ctx.getGuestName() == null) ctx.setGuestName(message.getGuestName());
 
-            log.info("SellerAgent {} GET_INFO | turn={}", ctx.getSessionId(), ctx.getTotalTurns());
+            log.debug("SellerAgent {} GET_INFO | turn={}", ctx.getSessionId(), ctx.getTotalTurns());
 
             try {
                 // Call LLM with get-info prompt

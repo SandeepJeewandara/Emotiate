@@ -134,7 +134,7 @@ public class AMServiceImpl implements AgentManagerService {
 
             // O2A (Object-to-Agent) channel passes the DTO directly
             userAgentController.putO2AObject(message, false);
-            log.info("Message passed via O2A to agent for session: {}", sessionId);
+            log.debug("Message passed via O2A to agent for session: {}", sessionId);
 
         } catch (StaleProxyException e) {
 
