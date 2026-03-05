@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class StartSessionRequestDto {
 
+    private Long guestId;
     private String guestName;
     private String initialMessage;
 }

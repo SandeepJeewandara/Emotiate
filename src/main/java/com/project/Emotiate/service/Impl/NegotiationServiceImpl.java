@@ -51,6 +51,7 @@ public class NegotiationServiceImpl implements NegotiationService {
         // Build and persist the new session with ACTIVE status
         NegotiationSession session = NegotiationSession.builder()
                 .sessionId(sessionId)
+                .guestId(request.getGuestId())
                 .guestName(request.getGuestName())
                 .status(SessionStatus.ACTIVE)
                 .currentRound(0)
@@ -311,6 +312,7 @@ public class NegotiationServiceImpl implements NegotiationService {
         return NegotiationSessionResponseDto.builder()
                 .id(session.getId())
                 .sessionId(session.getSessionId())
+                .guestId(session.getGuestId())
                 .guestName(session.getGuestName())
                 .status(session.getStatus())
                 .currentRound(session.getCurrentRound())

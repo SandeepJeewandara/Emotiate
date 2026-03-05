@@ -26,6 +26,9 @@ public class NegotiationSession {
     @Column(name = "session_id", unique = true, nullable = false)
     private String sessionId;
 
+    @Column(name = "guest_id")
+    private Long guestId;
+
     @Column(name = "guest_name")
     private String guestName;
 

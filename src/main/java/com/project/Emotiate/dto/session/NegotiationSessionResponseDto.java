@@ -16,6 +16,7 @@ public class NegotiationSessionResponseDto {
 
     private Long id;
     private String sessionId;
+    private Long guestId;
     private String guestName;
     private SessionStatus status;
     private Integer currentRound;
