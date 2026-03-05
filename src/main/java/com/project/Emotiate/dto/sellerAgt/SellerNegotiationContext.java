@@ -40,6 +40,7 @@ public class SellerNegotiationContext {
     private boolean negotiationStarted;
     private int totalTurns;
     private int negotiationRound;
+    private boolean abortEligible;
 
     // Guest Contact Details
     private String  guestEmail;
@@ -64,6 +65,7 @@ public class SellerNegotiationContext {
                 .selectedPackageId(null)
                 .negotiationStarted(false)
                 .negotiationRound(0)
+                .abortEligible(false)
                 .bookingComplete(false)
                 .bookingReference(null)
                 .selectedPackageId(null)

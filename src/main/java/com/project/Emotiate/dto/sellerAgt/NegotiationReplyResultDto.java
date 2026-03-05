@@ -14,4 +14,5 @@ public class NegotiationReplyResultDto {
     private String selectedPackage;
     private String reply;
     private boolean bookingRequested;
+    private boolean abortRequested;
 }

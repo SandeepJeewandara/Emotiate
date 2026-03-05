@@ -3,6 +3,7 @@ package com.project.Emotiate.agent;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.project.Emotiate.config.ApplicationContextHolder;
+import com.project.Emotiate.dto.chat.UserAgentReplyDto;
 import com.project.Emotiate.dto.packages.PackageResponseDto;
 import com.project.Emotiate.dto.resourceAgt.AvailabilityRequestDto;
 import com.project.Emotiate.dto.resourceAgt.AvailabilityResponseDto;
@@ -24,6 +25,7 @@ import com.project.Emotiate.enums.NegotiationStrategy;
 import com.project.Emotiate.module.EmotionDetectionModule;
 import com.project.Emotiate.module.SellerReplyModule;
 import com.project.Emotiate.module.StrategyOptimizationModule;
+import com.project.Emotiate.service.NegotiationService;
 import com.project.Emotiate.util.JsonUtil;
 import jade.core.AID;
 import jade.core.Agent;
@@ -70,6 +72,7 @@ public class SellerAgent extends Agent {
     private transient StrategyOptimizationModule strategyOptimizationModule;
     private transient SellerReplyModule sellerReplyModule;
     private transient GuestRepository guestRepository;
+    private transient NegotiationService negotiationService;
 
 
     @Override
@@ -100,6 +103,7 @@ public class SellerAgent extends Agent {
         this.strategyOptimizationModule = ApplicationContextHolder.getBean(StrategyOptimizationModule.class);
         this.sellerReplyModule          = ApplicationContextHolder.getBean(SellerReplyModule.class);
         this.guestRepository            = ApplicationContextHolder.getBean(GuestRepository.class);
+        this.negotiationService         = ApplicationContextHolder.getBean(NegotiationService.class);
 
         // Build and register the FSM that drives negotiation phases
         addBehaviour(buildFsm());
@@ -349,6 +353,7 @@ public class SellerAgent extends Agent {
             // Start counting negotiation rounds
             if (!ctx.isNegotiationStarted()) ctx.setNegotiationStarted(true);
             ctx.setNegotiationRound(ctx.getNegotiationRound() + 1);
+            ctx.setAbortEligible(ctx.getNegotiationRound() >= 4);
 
             log.debug("SellerAgent {} NEGOTIATING | round={} turn={}",
                     ctx.getSessionId(), ctx.getNegotiationRound(), ctx.getTotalTurns());
@@ -388,7 +393,14 @@ public class SellerAgent extends Agent {
             NegotiationReplyResultDto result = sellerReplyModule.generateNegotiatingReply(
                     guestMessage, history, emotion, strategy,
                     ctx.getAvailablePackages(), ctx.getSelectedPackage(),
-                    ctx.getCurrentOfferedPrice());
+                    ctx.getCurrentOfferedPrice(), ctx.isAbortEligible());
+
+            if (result.isAbortRequested()) {
+                log.info("SellerAgent {} aborting negotiation at round {}", ctx.getSessionId(), ctx.getNegotiationRound());
+                abortNegotiation(result.getReply());
+                done = true;
+                return;
+            }
 
             // If the LLM detected a new (or changed) package selection, update ctx
             boolean isNewSelection = result.getSelectedPackage() != null && ctx.getSelectedPackage() == null;
@@ -937,5 +949,20 @@ public class SellerAgent extends Agent {
         send(failure);
 
         log.error("SellerAgent {} sent FAILURE | reason: {}", ctx.getSessionId(), reason);
+    }
+
+
+    // Persists the final seller message and aborts the session cleanly.
+    private void abortNegotiation(String replyText) {
+        negotiationService.saveAgentReply(
+                UserAgentReplyDto.builder()
+                        .sessionId(ctx.getSessionId())
+                        .agentReply(replyText)
+                        .offeredPrice(ctx.getCurrentOfferedPrice() > 0.0 ? ctx.getCurrentOfferedPrice() : null)
+                        .recommendedPackageId(ctx.getSelectedPackageId())
+                        .bookingComplete(false)
+                        .build()
+        );
+        negotiationService.abortSession(ctx.getSessionId());
     }
 }

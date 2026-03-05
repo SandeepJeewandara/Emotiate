@@ -179,7 +179,8 @@ public class SellerReplyModule {
                                                               StrategyResultDto strategy,
                                                               List<AvailabilityResponseDto> availablePackages,
                                                               AvailabilityResponseDto selectedPackage,
-                                                              double currentOfferedPrice) {
+                                                              double currentOfferedPrice,
+                                                              boolean abortEligible) {
         try {
             // Convert available packages into a JSON array
             String pkgArray = availablePackages.stream()
@@ -242,7 +243,8 @@ public class SellerReplyModule {
                       "pricePerNight": %.0f,
                       "totalNights": %d,
                       "packageAddOns": "%s",
-                      "priceJustificationRequested": %b
+                      "priceJustificationRequested": %b,
+                      "abortEligible": %b
                     }
                     """,
                     guestMessage,
@@ -256,7 +258,8 @@ public class SellerReplyModule {
                     pricePerNight,
                     totalNights,
                     addOns,
-                    justificationAsked
+                    justificationAsked,
+                    abortEligible
             );
 
             log.trace("SellerReplyModule generating negotiating reply | strategy={} selectedPackage={}",
@@ -275,7 +278,11 @@ public class SellerReplyModule {
 
         } catch (Exception e) {
             log.error("SellerReplyModule failed to generate negotiating reply", e);
-            return NegotiationReplyResultDto.builder().selectedPackage(null).reply(fallbackReply()).build();
+            return NegotiationReplyResultDto.builder()
+                    .selectedPackage(null)
+                    .reply(fallbackReply())
+                    .abortRequested(false)
+                    .build();
         }
     }
 
