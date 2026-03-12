@@ -25,6 +25,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -93,7 +95,7 @@ public class NegotiationServiceImpl implements NegotiationService {
         session.setUpdatedAt(LocalDateTime.now());
         sessionRepository.save(session);
 
-        // Build the full conversation history to give the LLM proper context
+        // Build a capped conversation history (last 10 messages) to limit LLM token usage
         List<String> conversationHistory = buildConversationHistory(request.getSessionId());
 
         // Wrap the message in an AgentMessageDto and pass via the O2A channel
@@ -298,10 +300,13 @@ public class NegotiationServiceImpl implements NegotiationService {
     }
 
 
-    // Helper: build an ordered list of "SENDER: message" strings for LLM conversation context
+    // Helper: build a sliding window of the last 10 messages as "SENDER: message" strings for LLM context
     private List<String> buildConversationHistory(String sessionId) {
-        return messageRepository.findBySession_SessionIdOrderByTimestampAsc(sessionId)
-                .stream()
+        List<ChatMessage> recent = new ArrayList<>(
+                messageRepository.findTop10BySession_SessionIdOrderByTimestampDesc(sessionId)
+        );
+        Collections.reverse(recent);
+        return recent.stream()
                 .map(msg -> msg.getSenderType() + ": " + msg.getContent())
                 .collect(Collectors.toList());
     }

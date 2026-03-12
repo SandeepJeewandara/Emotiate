@@ -14,6 +14,10 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> 
     List<ChatMessage> findBySession_SessionIdOrderByTimestampAsc(String sessionId);
 
 
+    // Retrieve the most recent 10 messages for a session
+    List<ChatMessage> findTop10BySession_SessionIdOrderByTimestampDesc(String sessionId);
+
+
     // Count total messages in a session
     long countBySession_SessionId(String sessionId);
 
