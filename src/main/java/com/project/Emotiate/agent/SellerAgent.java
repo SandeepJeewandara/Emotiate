@@ -523,7 +523,7 @@ public class SellerAgent extends Agent {
                 // Check if message contains email or phone number
                 boolean hasContactInfo = message.getGuestMessage() != null
                         && (message.getGuestMessage().contains("@")
-                                || message.getGuestMessage().matches(".*\\d{7,}.*"));
+                                || message.getGuestMessage().replaceAll("\\D", "").length() >= 7);
 
                 // Ask user if no contact details provided yet
                 if (!hasContactInfo && ctx.getGuestEmail() == null && ctx.getGuestContactNumber() == null) {

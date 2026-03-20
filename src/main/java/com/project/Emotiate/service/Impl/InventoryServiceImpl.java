@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -161,9 +162,11 @@ public class InventoryServiceImpl implements InventoryService {
                 .substring(0, 8)
                 .toUpperCase();
 
-        // Calculate the total price for the full stay
+        // Calculate the total price for the full stay, rounded to the nearest 100
         BigDecimal totalPrice = request.getOfferedPrice()
-                .multiply(BigDecimal.valueOf(totalNights));
+                .multiply(BigDecimal.valueOf(totalNights))
+                .divide(BigDecimal.valueOf(100), 0, RoundingMode.HALF_UP)
+                .multiply(BigDecimal.valueOf(100));
 
         // Build the booking entity to be persisted
         Booking booking = Booking.builder()
