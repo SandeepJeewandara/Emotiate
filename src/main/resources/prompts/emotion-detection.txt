@@ -11,5 +11,5 @@ Definitions:
 - SATISFIED: happy with offer, positive feedback, expressing agreement
 - EXCITED: enthusiastic, highly positive, eager to proceed
 
-Respond with ONLY valid JSON — no markdown, no explanation:
+Respond with ONLY valid JSON - no Markdown, no explanation:
 {"emotion":"NEUTRAL","confidence":0.87,"reasoning":"one short sentence"}
